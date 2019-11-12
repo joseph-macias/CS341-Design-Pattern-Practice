@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -19,10 +20,14 @@ public class DataStructsFrame extends JFrame {
 		final JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		// CREATE TEXT BOX TO ADD EXTRA VALUES
-		final ListPanel inputList = new ListPanel("Enter your own values:");
+		final ListPanel inputList = new ListPanel("Enter your own values(Seperate by commas):");
 		inputList.setDiameter(75);
 		JTextField valAText = new JTextField();
+		JLabel valALable = new JLabel();
+		valALable.setText("ValA:");
 		JTextField valBText = new JTextField();
+		JLabel valBLable = new JLabel();
+		valBLable.setText("ValB:");
 
 		final ArrayList<ListItem> list1 = arrayToList(numbers1, numbers2);
 		final ListPanel unorderedList = new ListPanel("Unordered List");
@@ -81,10 +86,13 @@ public class DataStructsFrame extends JFrame {
 				}
 			}
 		});
-
+		
+		//ADD ELEMENTS TO PANEL
 		panel.add(unorderedList);
 		panel.add(inputList);
+		panel.add(valALable);
 		panel.add(valAText);
+		panel.add(valBLable);
 		panel.add(valBText);
 		panel.add(sortButton);
 		add(panel);
