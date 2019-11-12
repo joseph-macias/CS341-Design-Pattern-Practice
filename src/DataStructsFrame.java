@@ -6,6 +6,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 //test
 public class DataStructsFrame extends JFrame {
 	// CREATE BOOLEAN TO ONLY ADD THE LIST ONCE
@@ -16,8 +18,13 @@ public class DataStructsFrame extends JFrame {
 
 		final JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+		// CREATE TEXT BOX TO ADD EXTRA VALUES
+		final ListPanel inputList = new ListPanel("Enter your own values:");
+		inputList.setDiameter(75);
+		JTextField valAText = new JTextField();
+		JTextField valBText = new JTextField();
 
-		ArrayList<ListItem> list1 = arrayToList(numbers1, numbers2);
+		final ArrayList<ListItem> list1 = arrayToList(numbers1, numbers2);
 		final ListPanel unorderedList = new ListPanel("Unordered List");
 		unorderedList.setDiameter(75);
 		unorderedList.addItems(list1);
@@ -36,10 +43,39 @@ public class DataStructsFrame extends JFrame {
 			public void actionPerformed(ActionEvent ae) {
 				// CHECK IF LIST HAS ALREADY BEEN ADDED
 				if (ADDED == false) {
-					orderedList1.addItems(sortListDescending(list1));
-					orderedList2.addItems(sortListAscending(list1));
-					panel.add(orderedList1);
-					panel.add(orderedList2);
+					// READ THE TEXT FROM THE TEXTFIELD
+					String AText = valAText.getText();
+					String BText = valBText.getText();
+					// MAKE SURE THERE IS INPUT
+					if (AText.isEmpty() || BText.isEmpty()) {
+						valAText.setText("Error: valA or valB Text Field is empty. ");
+						valBText.setText("Error: valA or valB Text Field is empty. ");
+						// COMPUTE ORIGINAL LIST IF NO USER INPUT
+						computeOriginal(orderedList1, orderedList2, list1, panel);
+					}
+					// COMPUTE NEW LIST
+					else {
+						// STORE VALUES IN AN ARRAY
+						int[] newAValues = readAText(AText);
+						int[] newBValues = readBText(BText);
+
+						// MAKE SURE THE ARRAYS ARE THE SAME LENGTH
+						if (newAValues.length != newBValues.length) {
+							valAText.setText("Error: you must enter the same amount of values for valA and valB");
+							valBText.setText("Error: you must enter the same amount of values for valA and valB");
+							computeOriginal(orderedList1, orderedList2, list1, panel);
+						} else {
+							// ADD ON TO THE CURRENT PAIRS
+							int[] newNumbers1 = addTheValues(numbers1, newAValues);
+							int[] newNumbers2 = addTheValues(numbers2, newBValues);
+							// CREATE A NEW LIST WITH THE NEW VALUES
+							final ArrayList<ListItem> newList = arrayToList(newNumbers1, newNumbers2);
+							orderedList1.addItems(sortListDescending(newList));
+							orderedList2.addItems(sortListAscending(newList));
+							panel.add(orderedList1);
+							panel.add(orderedList2);
+						}
+					}
 					ADDED = true;
 					pack();
 				}
@@ -47,6 +83,9 @@ public class DataStructsFrame extends JFrame {
 		});
 
 		panel.add(unorderedList);
+		panel.add(inputList);
+		panel.add(valAText);
+		panel.add(valBText);
 		panel.add(sortButton);
 		add(panel);
 
@@ -94,5 +133,50 @@ public class DataStructsFrame extends JFrame {
 
 		}
 		return list;
+	}
+
+	private int[] readAText(String AText) {
+		// SPLIT STRING BY COMMAS
+		String[] aArray = AText.split(",");
+		// STORE INTEGER VALUES
+		int[] aValues = new int[aArray.length];
+		for (int i = 0; i < aArray.length; i++) {
+			aValues[i] = Integer.parseInt(aArray[i]);
+		}
+		return aValues;
+	}
+
+	private int[] readBText(String BText) {
+		// SPLIT STRING BY COMMAS
+		String[] bArray = BText.split(",");
+		// STORE INTEGER VALUES
+		int[] bValues = new int[bArray.length];
+		for (int i = 0; i < bArray.length; i++) {
+			bValues[i] = Integer.parseInt(bArray[i]);
+		}
+		return bValues;
+	}
+
+	private int[] addTheValues(int[] n, int[] a) {
+		// merge the two arrays
+		int length = n.length + a.length;
+		int[] arr = new int[length];
+		for (int i = 0; i < n.length; i++) {
+			arr[i] = n[i];
+			// System.out.println(arr[i]);
+		}
+		for (int j = n.length; j < length; j++) {
+			arr[j] = a[j - n.length];
+			// System.out.println(arr[j]);
+		}
+		return arr;
+	}
+
+	private void computeOriginal(ListPanel orderedList1, ListPanel orderedList2, ArrayList<ListItem> list1,
+			JPanel panel) {
+		orderedList1.addItems(sortListDescending(list1));
+		orderedList2.addItems(sortListAscending(list1));
+		panel.add(orderedList1);
+		panel.add(orderedList2);
 	}
 }
